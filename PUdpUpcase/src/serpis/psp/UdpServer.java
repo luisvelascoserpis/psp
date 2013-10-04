@@ -3,6 +3,7 @@ package serpis.psp;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.SocketException;
 
 public class UdpServer {
@@ -20,19 +21,27 @@ public class UdpServer {
 		
 		DatagramSocket datagramSocket = new DatagramSocket( PORT );
 		
-		byte[] buf = new byte[ MAX_PACKET_SIZE ];
-		int length = buf.length;
-		DatagramPacket inDatagramPacket = new DatagramPacket(buf, length);
+		byte[] inBuf = new byte[ MAX_PACKET_SIZE ];
+		int inLength = inBuf.length;
+		DatagramPacket inDatagramPacket = new DatagramPacket(inBuf, inLength);
 
 		datagramSocket.receive(inDatagramPacket); //aquí espera hasta recibir
-		
 		System.out.println("remote ip  =" + inDatagramPacket.getAddress());
 		System.out.println("remote port=" + inDatagramPacket.getPort());
+		System.out.println("getLength()=" + inDatagramPacket.getLength());
+		String inMessage = new String(inBuf, 0, inDatagramPacket.getLength());
+		System.out.println("inMessage  =" + inMessage);
 		
-		String message = new String(buf, 0, inDatagramPacket.getLength());
-		
-		System.out.println("message    =" + message);
-		
+		String outMessage = inMessage.toUpperCase();
+		System.out.println("outMessage =" + outMessage);
+		byte[] outBuf = outMessage.getBytes();
+		int outLength = outBuf.length;
+		InetAddress outInetAddress = inDatagramPacket.getAddress(); //ip del remitente
+		int outPort = inDatagramPacket.getPort(); //port del remitente
+		DatagramPacket outDatagramPacket = 
+				new DatagramPacket(outBuf, outLength, outInetAddress, outPort);
+		datagramSocket.send(outDatagramPacket);
+				
 		System.out.println("UdpServer end.");
 	}
 
