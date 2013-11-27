@@ -18,25 +18,37 @@ public class TcpServer {
 	 */
 	public static void main(String[] args) throws UnknownHostException, IOException {
 		
-		System.out.printf("TcpServer port=%s\n", SERVER_PORT);
 		
 		ServerSocket serverSocket = new ServerSocket(SERVER_PORT);
 		
-		Socket socket = serverSocket.accept();
+		while (true) {
+			System.out.printf("TcpServer port=%s\n", SERVER_PORT);
 		
+			Socket socket = serverSocket.accept();
+			System.out.printf("TcpServer socket.getInetAddress()=%s socket.getPort()=%s\n", socket.getInetAddress(), socket.getPort());
+
+			processClient(socket);
+			System.out.printf("TcpServer socket.close()\n");
+			socket.close();
+		}
+	}
+	
+	private static void processClient(Socket socket) throws IOException {
 		Scanner scanner = new Scanner(socket.getInputStream());
-		String lineIn = scanner.nextLine();
-		System.out.printf("TcpServer Recibido='%s'\n", lineIn);
-		
-		String lineOut = lineIn.toUpperCase();
-		System.out.printf("TcpServer Enviado='%s'\n", lineOut);
 		PrintWriter printWriter = new PrintWriter(socket.getOutputStream());
-		printWriter.printf("%s\n", lineOut);
-		printWriter.flush();
 		
-		System.out.printf("TcpServer end.\n");
+		while (true) {
+			String lineIn = scanner.nextLine();
+			if (lineIn.equals("."))
+				break;
+			
+			System.out.printf("TcpServer Recibido='%s'\n", lineIn);
+			String lineOut = lineIn.toUpperCase();
+			System.out.printf("TcpServer Enviado='%s'\n", lineOut);
+			printWriter.printf("%s\n", lineOut);
+			printWriter.flush();
+		}
 		
-		socket.close();
 	}
 
 }
