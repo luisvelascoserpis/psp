@@ -17,7 +17,13 @@ public class PruebaRunnable {
 //		}
 		
 		//Solución II: ContadorIC
-		new PruebaRunnable();
+		//new PruebaRunnable();
+		
+		//Solución III: ContadorLC
+		
+		//Solución IV: clase anónima
+		
+		//Solución V: que PruebaRunnable implemente Runnable
 		
 		System.out.println("main end.");
 	}
